@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">media template</string>
+    <string name="up_arrow_description">slide to open full media controller</string>
+    <string name="channel_name">playpack channel name</string>
+    <string name="channel_description">playpack channel description</string>
+    <string name="mode_image_description">image for switch day and night themes</string>
+</resources>

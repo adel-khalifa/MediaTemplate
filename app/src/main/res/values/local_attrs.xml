@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <attr name="recycler_background_shadow" format="color" />
+    <attr name="media_shadow" format="color" />
+</resources>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/media_sheet_constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:behavior_peekHeight="@dimen/media_peek_height"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+
+        >
+
+        <com.google.android.exoplayer2.ui.PlayerControlView
+            android:id="@+id/peek_controller"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/media_peek_height"
+            android:contentDescription="@string/up_arrow_description"
+            app:bar_height="4dp"
+            app:buffered_color="?attr/colorPrimary"
+            app:controller_layout_id="@layout/peek_media_controller_style"
+            app:layout_constraintTop_toTopOf="parent"
+            app:played_color="?attr/colorOnPrimary"
+
+            app:scrubber_color="?attr/colorOnPrimary"
+            app:scrubber_dragged_size="24dp"
+            app:show_timeout="0"
+            app:unplayed_color="?attr/colorPrimary" />
+
+
+        <com.google.android.exoplayer2.ui.StyledPlayerView
+            android:id="@+id/main_exo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?attr/colorPrimary"
+            android:focusable="true"
+            app:animation_enabled="true"
+            app:buffered_color="?attr/colorPrimary"
+            app:chainUseRtl="true"
+            app:controller_layout_id="@layout/layout_full_media"
+            app:default_artwork="@drawable/author"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/peek_controller"
+            app:played_color="?attr/colorOnPrimary"
+            app:scrubber_color="?attr/colorOnPrimary"
+            app:scrubber_dragged_size="12dp"
+            app:shutter_background_color="?attr/colorPrimary"
+            app:unplayed_color="?attr/colorPrimary" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
