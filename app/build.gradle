@@ -4,13 +4,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.example.mediatemplate"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -35,6 +34,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.example.mediatemplate'
 }
 
 dependencies {
@@ -51,11 +51,11 @@ dependencies {
 
 
     //exoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.12.2'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.2'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.19.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.19.1'
 
     //                 (hint from official documentation )
     // "debugImplementation because LeakCanary should only run in debug builds"
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 
 }

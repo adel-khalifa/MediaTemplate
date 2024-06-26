@@ -5,11 +5,14 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import android.support.v4.media.session.MediaControllerCompat
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.MainThread
@@ -26,7 +29,7 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.upstream.AssetDataSource
 
 
-class MyService : Service()  {
+class MyService : Service() {
 
 
     private lateinit var playerNotificationManager: PlayerNotificationManager
@@ -47,16 +50,19 @@ class MyService : Service()  {
         exoPlayer = SimpleExoPlayer.Builder(applicationContext).build()
         mediaList = loadNamesFromAssets()
         feedExoPlayerWithFullPlayList()
-        Log.w(TAG, "onCreate: exoplayer hash = ${exoPlayer.hashCode()}")
-        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
+        playerNotificationManager = PlayerNotificationManager.Builder(
             applicationContext,
-            CHANNEL_ID,
-            R.string.channel_name,
-            R.string.channel_description,
             NOTIFICATION_ID,
-            descriptionAdapter,
-            notificationListener
-        ).apply { setPlayer(exoPlayer) }
+            CHANNEL_ID,
+        )
+            .setChannelNameResourceId(R.string.channel_name)
+            .setChannelDescriptionResourceId(R.string.channel_description)
+
+            .setMediaDescriptionAdapter(descriptionAdapter)
+            .setNotificationListener(notificationListener)
+            .build().also { it.setPlayer(exoPlayer)}
+        Log.w(TAG, "onCreate: exoplayer hash = ${exoPlayer.hashCode()}")
+
 
     }
 
@@ -129,7 +135,7 @@ class MyService : Service()  {
                 applicationContext,
                 0,
                 Intent(applicationContext, MainActivity::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_IMMUTABLE
             )
 
         override fun getCurrentContentText(player: Player): CharSequence? = null
@@ -143,11 +149,11 @@ class MyService : Service()  {
     }
 
     private val notificationListener = object : PlayerNotificationManager.NotificationListener {
-
-        override fun onNotificationStarted(notificationId: Int, notification: Notification) {
-            Log.w(TAG, "onNotificationStarted: ")
-            startForeground(notificationId, notification)
-        }
+//
+//        override fun onNotificationStarted(notificationId: Int, notification: Notification) {
+//            Log.w(TAG, "onNotificationStarted: ")
+//            startForeground(notificationId, notification)
+//        }
 
         override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
             Log.w(TAG, "onNotificationCancelled:")
@@ -163,7 +169,23 @@ class MyService : Service()  {
             notification: Notification,
             ongoing: Boolean
         ) {
-            if (ongoing) startForeground(notificationId, notification) else stopForeground(false)
+            if (ongoing) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    startForeground(
+                        notificationId,
+                        notification,
+                        FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                    )
+                } else {
+                    startForeground(notificationId, notification)
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    stopForeground(STOP_FOREGROUND_DETACH)
+                } else {
+                    stopForeground(false)
+                }
+            }
         }
     }
 
@@ -187,12 +209,12 @@ class MyService : Service()  {
 
 
     private fun feedExoPlayerWithFullPlayList() = mediaList?.forEach { name ->
-       addAssetToPlayList(name)
+        addAssetToPlayList(name)
     }
 
-    private fun addAssetToPlayList(assetName: String,folderName :String="") {
+    private fun addAssetToPlayList(assetName: String, folderName: String = "") {
         val path = "assets:///$assetName"
-        val videoSource = ProgressiveMediaSource.Factory{ AssetDataSource(applicationContext) }
+        val videoSource = ProgressiveMediaSource.Factory { AssetDataSource(applicationContext) }
             .createMediaSource(MediaItem.fromUri(Uri.parse(path)))
         exoPlayer.addMediaSource(videoSource)
         Log.i(TAG, "addAssetToPlayer: path = $path")
@@ -206,7 +228,6 @@ class MyService : Service()  {
 
 
     }
-
 
 
 }
